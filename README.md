@@ -21,7 +21,7 @@ velocity commands.
 Building
 --
 
-The module finds its URDF through the [`mc_triorb_description`](../mc_triorb_description)
+The module finds its URDF through the [`mc_triorb_description`](https://github.com/rsp-post5g-rmb/mc_triorb_description)
 package via mc_rtc's `find_description_package` macro, so that package must be
 built and installed (to the same prefix) first. Then:
 
