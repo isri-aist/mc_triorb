@@ -1,4 +1,4 @@
-name: CI of NewRobotModule
+name: CI of mc_triorb
 
 on:
   push:

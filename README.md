@@ -1,48 +1,49 @@
-mc_rtc new robot module template
+mc_triorb
 ==
 
-This project is a template for a new robot module project wihtin [mc_rtc]
+An [mc_rtc] robot module for the **TriOrb** omnidirectional mobile base.
 
-It comes with:
-- a CMake project that can build a controller in [mc_rtc], the project can be put within [mc_rtc] source-tree for easier updates
-- clang-format files
-- automated GitHub Actions builds on three major platforms
+The base is modelled from [`mc_triorb_description`](../mc_triorb_description) as a
+fixed `world` root carrying the body through three actuated joints:
 
-This repository actually creates two robot modules:
-- `NewRobotModule` is a C++ robot module in the [src](src) folder
-- `NewRobotModuleYAML` is a YAML robot module in the [yaml](yaml) folder
+| Joint      | Type       | Axis      | Meaning              |
+|------------|------------|-----------|----------------------|
+| `base_x`   | prismatic  | world `x` | base position along X |
+| `base_y`   | prismatic  | world `y` | base position along Y |
+| `base_yaw` | continuous | world `z` | base heading          |
 
-They both re-create the JVRC1 robot module shipped with [mc_rtc]
+Because the planar pose is exposed as three regular joints, the controller's QP
+sees the base position directly — no floating base is needed. The
+`base_x, base_y, base_yaw` ordering is the reference joint order, which is also
+the order the TriOrb base driver/plugin uses to feed odometry and read back
+velocity commands.
 
-Quick start
+Building
 --
 
-1. Renaming the robot module from `NewRobotModule` to `MyRobotModule`. In a shell (Git Bash on Windows, replace sed with gsed on macOS):
+The module finds its URDF through the [`mc_triorb_description`](../mc_triorb_description)
+package via mc_rtc's `find_description_package` macro, so that package must be
+built and installed (to the same prefix) first. Then:
 
 ```bash
-sed -i -e's/NewRobotModule/MyRobotModule/g' `find . -type f`
+mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=<your mc_rtc install prefix>
+cmake --build .
+cmake --install .
+ctest          # runs loader_triorb, which loads the URDF through mc_rtc
 ```
 
-2. If you choose to build a C++ robot module
+(The `loader_triorb` test resolves the URDF from the installed description
+package, so install before running `ctest`.)
 
-```bash
-git rm -rf yaml
-sed -i -e's/add_subdirectory(yaml)//' CMakeLists.txt
-git mv src/NewRobotModule.in.cpp src/MyRobotModule.in.cpp
-git mv src/NewRobotModule.h src/MyRobotModule.h
+Using it
+--
+
+Once installed into your mc_rtc prefix, select the robot by name `triorb`, e.g.
+set `MainRobot: triorb` in your controller configuration, or load it from code:
+
+```cpp
+auto rm = mc_rbdyn::RobotLoader::get_robot_module("triorb");
 ```
-
-3. If you choose to build a YAML robot module
-
-```bash
-git rm -rf src
-sed -i -e's/add_subdirectory(src)//' CMakeLists.txt
-```
-
-4. You can customize the project name in vcpkg.json as well, note that this must follow [vcpkg manifest rules](https://github.com/microsoft/vcpkg/blob/master/docs/users/manifests.md)
-
-5. Build and install the project
-
-6. Run using your [mc_rtc] interface of choice, and setting `MainRobot` to `MyRobotModule`
 
 [mc_rtc]: https://jrl-umi3218.github.io/mc_rtc/

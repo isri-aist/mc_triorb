@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.22)
 
 set(CXX_DISABLE_WERROR 1)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
-set(PROJECT_NAME NewRobotModule)
-set(PROJECT_DESCRIPTION "NewRobotModule")
+set(PROJECT_NAME mc_triorb)
+set(PROJECT_DESCRIPTION "TriOrb omnidirectional base robot module for mc_rtc")
 set(PROJECT_URL "")
 
 project(
@@ -24,8 +24,11 @@ endif()
 
 find_package(mc_rtc REQUIRED)
 
+# Locate the triorb description package (provides urdf/triorb.urdf). This sets
+# the MC_TRIORB_DESCRIPTION_PATH variable.
+find_description_package(mc_triorb_description REQUIRED)
+
 add_subdirectory(src)
-add_subdirectory(yaml)
 
 if(BUILD_TESTING)
   add_subdirectory(tests)

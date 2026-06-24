@@ -1,8 +1,8 @@
 {
-  "name": "mc-rtc-new-robot-module",
+  "name": "mc-triorb",
   "version-string": "1.0.0",
   "homepage": "",
-  "description": "NewRobotModule for mc_rtc",
+  "description": "TriOrb omnidirectional base robot module for mc_rtc",
   "dependencies": [
     "mc-rtc"
   ]
