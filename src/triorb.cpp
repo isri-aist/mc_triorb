@@ -3,6 +3,8 @@
 #include <mc_triorb/config.h>
 #include <RBDyn/parsers/urdf.h>
 
+#include <limits>
+
 namespace mc_robots
 {
 
@@ -18,6 +20,13 @@ TriorbRobotModule::TriorbRobotModule(const std::string & name) : mc_rbdyn::Robot
 
   // Makes all the basic initialization that can be done from an URDF file
   init(rbd::parsers::from_urdf_file(urdf_path, fixed));
+  const double infinity = std::numeric_limits<double>::infinity();
+  
+  _bounds[0]["base_x"] = {-infinity};
+  _bounds[1]["base_x"] = {infinity};
+  
+  _bounds[0]["base_y"] = {-infinity};
+  _bounds[1]["base_y"] = {infinity};
 
   // Order of the actuated joints as seen by the control/sensor vectors. The
   // base driver feeds odometry (x, y, yaw) and reads back velocity commands in
