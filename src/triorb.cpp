@@ -8,7 +8,8 @@
 namespace mc_robots
 {
 
-TriorbRobotModule::TriorbRobotModule(const std::string & name) : mc_rbdyn::RobotModule(TRIORB_DESCRIPTION_PATH, "triorb")
+TriorbRobotModule::TriorbRobotModule(const std::string & name)
+: mc_rbdyn::RobotModule(TRIORB_DESCRIPTION_PATH, "triorb")
 {
   // The 2-argument RobotModule constructor derives urdf_path as
   // <path>/urdf/triorb.urdf, which is exactly where mc_triorb_description
@@ -21,10 +22,10 @@ TriorbRobotModule::TriorbRobotModule(const std::string & name) : mc_rbdyn::Robot
   // Makes all the basic initialization that can be done from an URDF file
   init(rbd::parsers::from_urdf_file(urdf_path, fixed));
   const double infinity = std::numeric_limits<double>::infinity();
-  
+
   _bounds[0]["base_x"] = {-infinity};
   _bounds[1]["base_x"] = {infinity};
-  
+
   _bounds[0]["base_y"] = {-infinity};
   _bounds[1]["base_y"] = {infinity};
 
