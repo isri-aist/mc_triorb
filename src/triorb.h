@@ -22,7 +22,7 @@ namespace mc_robots
  */
 struct MC_ROBOTS_DLLAPI TriorbRobotModule : public mc_rbdyn::RobotModule
 {
-  TriorbRobotModule();
+  TriorbRobotModule(const std::string & name);
 };
 
 } // namespace mc_robots
@@ -31,7 +31,7 @@ extern "C"
 {
   ROBOT_MODULE_API void MC_RTC_ROBOT_MODULE(std::vector<std::string> & names)
   {
-    names = {"triorb"};
+    names = {"TriOrb"};
   }
   ROBOT_MODULE_API void destroy(mc_rbdyn::RobotModule * ptr)
   {
@@ -39,10 +39,10 @@ extern "C"
   }
   ROBOT_MODULE_API mc_rbdyn::RobotModule * create(const std::string & n)
   {
-    ROBOT_MODULE_CHECK_VERSION("triorb")
-    if(n == "triorb")
+    ROBOT_MODULE_CHECK_VERSION("TriOrb")
+    if(n == "TriOrb")
     {
-      return new mc_robots::TriorbRobotModule();
+      return new mc_robots::TriorbRobotModule("triorb");
     }
     else
     {

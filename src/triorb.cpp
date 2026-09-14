@@ -6,7 +6,7 @@
 namespace mc_robots
 {
 
-TriorbRobotModule::TriorbRobotModule() : mc_rbdyn::RobotModule(TRIORB_DESCRIPTION_PATH, "triorb")
+TriorbRobotModule::TriorbRobotModule(const std::string & name) : mc_rbdyn::RobotModule(TRIORB_DESCRIPTION_PATH, "triorb")
 {
   // The 2-argument RobotModule constructor derives urdf_path as
   // <path>/urdf/triorb.urdf, which is exactly where mc_triorb_description
