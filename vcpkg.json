@@ -3,6 +3,7 @@
   "version-string": "1.0.0",
   "homepage": "",
   "description": "TriOrb omnidirectional base robot module for mc_rtc",
+  "builtin-baseline": "2026.07.29",
   "dependencies": [
     "mc-rtc"
   ]

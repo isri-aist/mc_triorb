@@ -36,6 +36,7 @@ jobs:
               cloudsmith: mc-rtc/head
         macos: |
           brew-taps: mc-rtc/mc-rtc
+          brew-trust: mc-rtc/mc-rtc
           brew: mc_rtc
         windows: |
           vcpkg:
