@@ -1,5 +1,5 @@
 if(TARGET triorb)
-  set(ROBOT_MODULE_PARAMS "\"triorb\"")
+  set(ROBOT_MODULE_PARAMS "\"TriOrb\"")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/loader.in.cpp"
                  "${CMAKE_CURRENT_BINARY_DIR}/triorb/loader.cpp")
   add_executable(loader_triorb "${CMAKE_CURRENT_BINARY_DIR}/triorb/loader.cpp")
