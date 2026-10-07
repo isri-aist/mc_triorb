@@ -15,7 +15,7 @@ jobs:
         build-type: [RelWithDebInfo]
         compiler: [gcc]
     env:
-      ROS_DISTRO: humble
+      ROS_DISTRO: jazzy
     steps:
     - uses: actions/checkout@v4
       with:
@@ -68,7 +68,7 @@ jobs:
       run: |
         set -e
 
-        source /opt/ros/humble/setup.bash
+        source /opt/ros/${ROS_DISTRO}/setup.bash
 
         git clone https://github.com/isri-aist/mc_triorb_description.git /tmp/mc_triorb_description
         cd /tmp/mc_triorb_description
