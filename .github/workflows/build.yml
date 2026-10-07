@@ -2,14 +2,9 @@ name: CI of mc_triorb
 
 on:
   push:
-    branches:
-      - '**'
+    branches: [main]
   pull_request:
-    branches:
-      - '**'
-  schedule:
-    # Run on Sunday, Tuesday and Thursday nights
-    - cron: '0 23 * * 0,1,4'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,11 +16,22 @@ jobs:
         compiler: [gcc]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
 
-    # Trust Homebrew tap BEFORE attempting to install
+    # ── Pre-commit ──
+    - name: Cache pre-commit
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+    - name: Run pre-commit
+      run: |
+        pip install pre-commit
+        pre-commit run --all-files
+
     - name: Trust Homebrew tap (macOS)
       if: runner.os == 'macOS'
       run: |
@@ -54,6 +60,25 @@ jobs:
             registries:
             - repo: mc-rtc/vcpkg-registry
               packages: [ spacevecalg, rbdyn, eigen-qld, sch-core, tasks, mc-rbdyn-urdf, mc-rtc-data, eigen-quadprog, state-observation, hpp-spline, mc-rtc ]
+
+    # Install mc_triorb_description for all OS
+    - name: Install mc_triorb_description
+      shell: bash
+      run: |
+        set -e
+        git clone https://github.com/isri-aist/mc_triorb_description.git /tmp/mc_triorb_description
+        cd /tmp/mc_triorb_description
+        mkdir -p build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+        cmake --build .
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          cmake --install . --config ${{ matrix.build-type }}
+        else
+          sudo cmake --install .
+        fi
+      env:
+        RUNNER_OS: ${{ runner.os }}
 
     - name: Build and test
       uses: jrl-umi3218/github-actions/build-cmake-project@master
