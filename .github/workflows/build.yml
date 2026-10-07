@@ -8,13 +8,14 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-latest, windows-latest]
         build-type: [RelWithDebInfo]
         compiler: [gcc]
-    runs-on: ${{ matrix.os }}
+    env:
+      ROS_DISTRO: humble
     steps:
     - uses: actions/checkout@v4
       with:
@@ -32,53 +33,31 @@ jobs:
         pip install pre-commit
         pre-commit run --all-files
 
-    - name: Trust Homebrew tap (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        brew tap mc-rtc/mc-rtc
-        brew trust mc-rtc/mc-rtc
-
     - name: Install dependencies
       uses: jrl-umi3218/github-actions/install-dependencies@master
       with:
         compiler: ${{ matrix.compiler }}
         build-type: ${{ matrix.build-type }}
-        ubuntu: |
+        run: |
           apt: libmc-rtc-dev
           apt-mirrors:
             mc-rtc:
               cloudsmith: mc-rtc/head
-        macos: |
-          brew-taps: mc-rtc/mc-rtc
-          brew: mc_rtc
-        windows: |
-          vcpkg:
-            repo: microsoft/vcpkg
-            owner: mc-rtc
-            token: "${{ secrets.GITHUB_TOKEN }}"
-            cache_id: 2
-            registries:
-            - repo: mc-rtc/vcpkg-registry
-              packages: [ spacevecalg, rbdyn, eigen-qld, sch-core, tasks, mc-rbdyn-urdf, mc-rtc-data, eigen-quadprog, state-observation, hpp-spline, mc-rtc ]
 
-    # Install mc_triorb_description for all OS
     - name: Install mc_triorb_description
       shell: bash
       run: |
         set -e
+
+        source /opt/ros/humble/setup.bash
+
         git clone https://github.com/isri-aist/mc_triorb_description.git /tmp/mc_triorb_description
         cd /tmp/mc_triorb_description
         mkdir -p build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
         cmake --build .
-        if [ "$RUNNER_OS" = "Windows" ]; then
-          cmake --install . --config ${{ matrix.build-type }}
-        else
-          sudo cmake --install .
-        fi
-      env:
-        RUNNER_OS: ${{ runner.os }}
+        sudo cmake --install .
 
     - name: Build and test
       uses: jrl-umi3218/github-actions/build-cmake-project@master
